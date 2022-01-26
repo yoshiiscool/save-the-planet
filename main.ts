@@ -1,15 +1,73 @@
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    projectile.sayText("ha ha")
+})
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    mySprite.sayText("Help!", 500, true)
+})
+info.onCountdownEnd(function () {
+    myEnemy = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . 1 . . . . . . . . . 1 . . . . 
+        . 1 1 . . . . . . . 1 1 . . . . 
+        . 1 1 . . 7 7 . . . 1 1 . . . . 
+        . 1 1 7 7 7 7 7 7 . 1 1 . . . . 
+        . 1 1 7 7 7 2 7 7 7 1 1 . . . . 
+        . 1 7 7 2 7 7 7 2 7 7 1 . . . . 
+        . . 7 7 7 7 2 7 7 7 7 . . . . . 
+        . . 7 7 7 7 7 7 7 7 7 . . . . . 
+        . 7 7 f 1 7 7 7 7 f 7 . . . . . 
+        7 7 7 7 f 1 f 1 f 1 7 . . . 7 . 
+        7 7 7 7 1 f 1 f 1 7 7 7 7 7 7 . 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 . 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 . 
+        7 7 7 7 7 . 7 7 7 7 . . . . . . 
+        . 7 7 . . . . 7 7 . . . . . . . 
+        `, SpriteKind.Enemy)
+    myEnemy.follow(mySprite, 15)
+    info.startCountdown(3)
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
+    projectile.sayText("ha ha", 500, true)
+    mySprite.sayText("ouchy", 500, true)
     mySprite.startEffect(effects.halo, 200)
     info.changeScoreBy(-5)
     info.changeLifeBy(-1)
 })
+sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
+    mySprite.sayText("ouchy that hurts", 500, true)
+    myEnemy.sayText("he he", 500, true)
+    info.changeLifeBy(-5)
+})
 info.onLifeZero(function () {
+    game.setDialogCursor(img`
+        . . . . . . . . . . . . . . . . 
+        . 1 . . . . . . . . . 1 . . . . 
+        . 1 1 . . . . . . . 1 1 . . . . 
+        . 1 1 . . 7 7 . . . 1 1 . . . . 
+        . 1 1 7 7 7 7 7 7 . 1 1 . . . . 
+        . 1 1 7 7 7 2 7 7 7 1 1 . . . . 
+        . 1 7 7 2 7 7 7 2 7 7 1 . . . . 
+        . . 7 7 7 7 2 7 7 7 7 . . . . . 
+        . . 7 7 7 7 7 7 7 7 7 . . . . . 
+        . 7 7 f 1 7 7 7 7 f 7 . . . . . 
+        7 7 7 7 f 1 f 1 f 1 7 . . . 7 . 
+        7 7 7 7 1 f 1 f 1 7 7 7 7 7 7 . 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 . 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 . 
+        7 7 7 7 7 . 7 7 7 7 . . . . . . 
+        . 7 7 . . . . 7 7 . . . . . . . 
+        `)
+    game.splash("😵Earth has been destroyed all of its citizens are Dead!😢")
     game.over(false, effects.dissolve)
 })
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
+    myEnemy.destroy(effects.disintegrate, 500)
+    info.changeLifeBy(10)
+})
+let myEnemy: Sprite = null
 let projectile: Sprite = null
 let mySprite: Sprite = null
-info.setLife(150)
-game.splash("Save The Earth")
+info.startCountdown(30)
 game.setDialogCursor(img`
     . . . . 9 9 8 8 9 9 9 9 9 . . . 
     . . . 9 9 9 9 8 8 9 9 9 7 . . . 
@@ -28,6 +86,7 @@ game.setDialogCursor(img`
     . . . . 9 7 7 7 9 9 9 8 . . . . 
     . . . . . . . . . . . . . . . . 
     `)
+game.splash("Save The Earth")
 scene.setBackgroundImage(img`
     ............................................................................................................55...55...444444444444444444444444444444444444444444
     ..............................................................................................................555555..444444444444444444444444444444444444444444
@@ -171,6 +230,7 @@ mySprite = sprites.create(img`
     `, SpriteKind.Player)
 controller.moveSprite(mySprite)
 mySprite.setStayInScreen(true)
+info.setLife(150)
 game.onUpdateInterval(1000, function () {
     projectile = sprites.createProjectileFromSide(img`
         . . . . . . . . . c c 8 . . . . 
@@ -191,4 +251,7 @@ game.onUpdateInterval(1000, function () {
         . . . . . c c c c c c . . . . . 
         `, randint(-50, 50), randint(-50, 50))
     info.changeScoreBy(5)
+})
+forever(function () {
+    music.playMelody("E B C5 A B G A F ", 40)
 })
