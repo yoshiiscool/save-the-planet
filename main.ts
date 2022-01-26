@@ -23,7 +23,7 @@ info.onCountdownEnd(function () {
         7 7 7 7 7 . 7 7 7 7 . . . . . . 
         . 7 7 . . . . 7 7 . . . . . . . 
         `, SpriteKind.Enemy)
-    myEnemy.follow(mySprite, 15)
+    myEnemy.follow(mySprite, 25)
     info.startCountdown(3)
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
