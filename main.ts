@@ -62,7 +62,7 @@ info.onLifeZero(function () {
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     myEnemy.destroy(effects.disintegrate, 500)
-    info.changeLifeBy(10)
+    info.changeLifeBy(3)
 })
 let myEnemy: Sprite = null
 let projectile: Sprite = null
