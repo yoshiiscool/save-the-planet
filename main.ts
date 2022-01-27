@@ -1,8 +1,8 @@
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    projectile.sayText("ha ha")
+    projectile.sayText("ha ha", 1000, false)
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    mySprite.sayText("Help!", 500, true)
+    mySprite.sayText("Help!", 1000, true)
 })
 info.onCountdownEnd(function () {
     myEnemy = sprites.create(img`
@@ -27,16 +27,16 @@ info.onCountdownEnd(function () {
     info.startCountdown(3)
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
-    projectile.sayText("ha ha", 500, true)
-    mySprite.sayText("ouchy", 500, true)
+    projectile.sayText("ha ha", 1000, true)
+    mySprite.sayText("ouchy", 1000, true)
     mySprite.startEffect(effects.halo, 200)
     info.changeScoreBy(-5)
     info.changeLifeBy(-1)
 })
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
-    mySprite.sayText("ouchy that hurts", 500, true)
-    myEnemy.sayText("he he", 500, true)
-    info.changeLifeBy(-5)
+    mySprite.sayText("ouchy that hurts", 1000, true)
+    myEnemy.sayText("he he", 1000, true)
+    info.changeLifeBy(-10)
 })
 info.onLifeZero(function () {
     game.setDialogCursor(img`
@@ -61,7 +61,7 @@ info.onLifeZero(function () {
     game.over(false, effects.dissolve)
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
-    myEnemy.destroy(effects.disintegrate, 500)
+    myEnemy.destroy(effects.disintegrate, 5000)
     info.changeLifeBy(3)
 })
 let myEnemy: Sprite = null
@@ -231,6 +231,9 @@ mySprite = sprites.create(img`
 controller.moveSprite(mySprite)
 mySprite.setStayInScreen(true)
 info.setLife(150)
+game.onUpdateInterval(5000, function () {
+    mySprite.sayText("help", 500, true)
+})
 game.onUpdateInterval(1000, function () {
     projectile = sprites.createProjectileFromSide(img`
         . . . . . . . . . c c 8 . . . . 
