@@ -57,12 +57,12 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, ot
     mySprite.sayText("ouchy", 1000, true)
     mySprite.startEffect(effects.halo, 200)
     info.changeScoreBy(-5)
-    statusbar.value += -1
+    statusbar.value += -5
 })
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
     mySprite.sayText("ouchy that hurts", 1000, true)
     myEnemy.sayText("he he", 1000, true)
-    statusbar.value += -3
+    statusbar.value += -6
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     myEnemy.destroy(effects.disintegrate, 5000)
