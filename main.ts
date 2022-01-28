@@ -1,3 +1,6 @@
+namespace SpriteKind {
+    export const health = SpriteKind.create()
+}
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     projectile.sayText("ha ha", 1000, false)
 })
@@ -26,19 +29,7 @@ info.onCountdownEnd(function () {
     myEnemy.follow(mySprite, 30)
     info.startCountdown(3)
 })
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
-    projectile.sayText("ha ha", 1000, true)
-    mySprite.sayText("ouchy", 1000, true)
-    mySprite.startEffect(effects.halo, 200)
-    info.changeScoreBy(-5)
-    info.changeLifeBy(-1)
-})
-sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
-    mySprite.sayText("ouchy that hurts", 1000, true)
-    myEnemy.sayText("he he", 1000, true)
-    info.changeLifeBy(-10)
-})
-info.onLifeZero(function () {
+statusbars.onZero(StatusBarKind.Health, function (status) {
     game.setDialogCursor(img`
         . . . . . . . . . . . . . . . . 
         . 1 . . . . . . . . . 1 . . . . 
@@ -61,12 +52,26 @@ info.onLifeZero(function () {
     mySprite.destroy(effects.disintegrate, 100)
     game.over(false, effects.dissolve)
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
+    projectile.sayText("ha ha", 1000, true)
+    mySprite.sayText("ouchy", 1000, true)
+    mySprite.startEffect(effects.halo, 200)
+    info.changeScoreBy(-5)
+    statusbar.value += -1
+})
+sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
+    mySprite.sayText("ouchy that hurts", 1000, true)
+    myEnemy.sayText("he he", 1000, true)
+    statusbar.value += -3
+})
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     myEnemy.destroy(effects.disintegrate, 5000)
     info.changeLifeBy(3)
 })
+let projectile2: Sprite = null
 let myEnemy: Sprite = null
 let projectile: Sprite = null
+let statusbar: StatusBarSprite = null
 let mySprite: Sprite = null
 info.startCountdown(30)
 game.setDialogCursor(img`
@@ -231,9 +236,32 @@ mySprite = sprites.create(img`
     `, SpriteKind.Player)
 controller.moveSprite(mySprite)
 mySprite.setStayInScreen(true)
-info.setLife(150)
+statusbar = statusbars.create(20, 4, StatusBarKind.Health)
+statusbar.attachToSprite(mySprite, -30, 0)
 game.onUpdateInterval(5000, function () {
     mySprite.sayText("help", 500, true)
+})
+game.onUpdateInterval(5000, function () {
+    projectile2 = sprites.createProjectileFromSide(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . 7 7 7 7 . . . . . . 
+        . . . . . . 7 7 7 7 . . . . . . 
+        . . . . . . 7 7 7 7 . . . . . . 
+        . . . . . . 7 7 7 7 . . . . . . 
+        . . 7 7 7 7 7 7 7 7 7 7 7 7 . . 
+        . . 7 7 7 7 7 7 7 7 7 7 7 7 . . 
+        . . 7 7 7 7 7 7 7 7 7 7 7 7 . . 
+        . . 7 7 7 7 7 7 7 7 7 7 7 7 . . 
+        . . . . . . 7 7 7 7 . . . . . . 
+        . . . . . . 7 7 7 7 . . . . . . 
+        . . . . . . 7 7 7 7 . . . . . . 
+        . . . . . . 7 7 7 7 . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, 0, 80)
+    projectile2.x = randint(0, 160)
+    projectile2.setKind(SpriteKind.health)
 })
 game.onUpdateInterval(1000, function () {
     projectile = sprites.createProjectileFromSide(img`
@@ -254,6 +282,46 @@ game.onUpdateInterval(1000, function () {
         . . . . c c a b b c c c . . . . 
         . . . . . c c c c c c . . . . . 
         `, randint(-50, 50), randint(-50, 50))
+    animation.runImageAnimation(
+    projectile,
+    [img`
+        . . . . . . . c c c a c . . . . 
+        . . c c b b b a c a a a c . . . 
+        . c c a b a c b a a a b c c . . 
+        . c a b c f f f b a b b b a . . 
+        . c a c f f f 8 a b b b b b a . 
+        . c a 8 f f 8 c a b b b b b a . 
+        c c c a c c c c a b c f a b c c 
+        c c a a a c c c a c f f c b b a 
+        c c a b 6 a c c a f f c c b b a 
+        c a b c 8 6 c c a a a b b c b c 
+        c a c f f a c c a f a c c c b . 
+        c a 8 f c c b a f f c b c c c . 
+        . c b c c c c b f c a b b a c . 
+        . . a b b b b b b b b b b b c . 
+        . . . c c c c b b b b b c c . . 
+        . . . . . . . . c b b c . . . . 
+        `,img`
+        . . . . . . . . . c c 8 . . . . 
+        . . . . . . 8 c c c f 8 c c . . 
+        . . . c c 8 8 f c a f f f c c . 
+        . . c c c f f f c a a f f c c c 
+        8 c c c f f f f c c a a c 8 c c 
+        c c c b f f f 8 a c c a a a c c 
+        c a a b b 8 a b c c c c c c c c 
+        a f c a a b b a c c c c c f f c 
+        a 8 f c a a c c a c a c f f f c 
+        c a 8 a a c c c c a a f f f 8 a 
+        . a c a a c f f a a b 8 f f c a 
+        . . c c b a f f f a b b c c 6 c 
+        . . . c b b a f f 6 6 a b 6 c . 
+        . . . c c b b b 6 6 a c c c c . 
+        . . . . c c a b b c c c . . . . 
+        . . . . . c c c c c c . . . . . 
+        `],
+    5000,
+    true
+    )
     info.changeScoreBy(5)
 })
 forever(function () {
