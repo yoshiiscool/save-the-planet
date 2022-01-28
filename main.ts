@@ -23,7 +23,7 @@ info.onCountdownEnd(function () {
         7 7 7 7 7 . 7 7 7 7 . . . . . . 
         . 7 7 . . . . 7 7 . . . . . . . 
         `, SpriteKind.Enemy)
-    myEnemy.follow(mySprite, 25)
+    myEnemy.follow(mySprite, 30)
     info.startCountdown(3)
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
@@ -58,6 +58,7 @@ info.onLifeZero(function () {
         . 7 7 . . . . 7 7 . . . . . . . 
         `)
     game.splash("😵Earth has been destroyed all of its citizens are Dead!😢")
+    mySprite.destroy(effects.disintegrate, 100)
     game.over(false, effects.dissolve)
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
